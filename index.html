@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cermin Sekolah — Alat Bantu Memilih</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --warm-white: #FDFAF4;
+    --ink: #1C1A16;
+    --ink-light: #4A4640;
+    --ink-faint: #8A8680;
+    --amber: #C8862A;
+    --amber-light: #E8A94A;
+    --amber-pale: #F5E4C0;
+    --sage: #5A7A6A;
+    --sage-pale: #D8E8E0;
+    --rose: #A85A5A;
+    --rose-pale: #F0DADA;
+    --border: #DDD8CE;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(200,134,42,0.04) 40px,
+      rgba(200,134,42,0.04) 41px
+    );
+  }
+
+  .header-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber-light);
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  header h1 {
+    font-family: 'Lora', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 400;
+    line-height: 1.2;
+    position: relative;
+  }
+
+  header h1 em {
+    color: var(--amber-light);
+    font-style: italic;
+  }
+
+  header p {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: rgba(245,240,232,0.6);
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+  }
+
+  /* PROGRESS */
+  .progress-bar {
+    background: var(--ink);
+    padding: 0 2rem 0;
+    display: flex;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .step-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.4);
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-dot.active {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: white;
+  }
+
+  .step-dot.done {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: white;
+  }
+
+  .step-line {
+    width: 60px;
+    height: 2px;
+    background: rgba(255,255,255,0.1);
+    transition: background 0.4s ease;
+  }
+
+  .step-line.done {
+    background: var(--sage);
+  }
+
+  .step-labels {
+    background: var(--ink);
+    padding: 0.5rem 2rem 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .step-label-item {
+    width: 32px;
+    text-align: center;
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .step-label-item.active { color: var(--amber-light); }
+  .step-label-item.done { color: var(--sage); }
+
+  .step-label-spacer { width: 60px; }
+
+  /* MAIN CONTAINER */
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+  }
+
+  /* SECTIONS */
+  .section {
+    display: none;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .section.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-title {
+    font-family: 'Lora', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    color: var(--ink);
+  }
+
+  .section-title em { color: var(--amber); font-style: italic; }
+
+  .section-desc {
+    font-size: 0.9rem;
+    color: var(--ink-faint);
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-title {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .card-title .num {
+    width: 24px;
+    height: 24px;
+    background: var(--amber-pale);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--amber);
+    flex-shrink: 0;
+  }
+
+  /* FORM ELEMENTS */
+  .field {
+    margin-bottom: 1.25rem;
+  }
+
+  label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink-light);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.02em;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--amber);
+  }
+
+  /* PRIORITY SLIDERS */
+  .priority-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .priority-item {
+    display: grid;
+    grid-template-columns: 140px 1fr 36px;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .priority-item label {
+    font-size: 0.82rem;
+    margin: 0;
+    color: var(--ink-light);
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--amber);
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(200,134,42,0.3);
+  }
+
+  .range-val {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--amber);
+    text-align: center;
+  }
+
+  .priority-note {
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    margin-top: 0.75rem;
+    padding: 0.6rem 0.9rem;
+    background: var(--amber-pale);
+    border-radius: 6px;
+  }
+
+  /* SCHOOL TABS */
+  .school-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .school-tab {
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: white;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink-faint);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .school-tab.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: white;
+  }
+
+  .school-form { display: none; }
+  .school-form.active { display: block; }
+
+  /* VISI TAGS */
+  .visi-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .visi-tag {
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: white;
+    font-size: 0.8rem;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .visi-tag.selected {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: white;
+  }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+    justify-content: flex-end;
+  }
+
+  .btn {
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  .btn-primary:hover { background: #2C2A26; transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink-light);
+    border: 1.5px solid var(--border);
+  }
+
+  .btn-secondary:hover { border-color: var(--ink-light); }
+
+  /* HASIL */
+  .hasil-header {
+    text-align: center;
+    padding: 2rem 0 2.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+
+  .hasil-header h2 {
+    font-family: 'Lora', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+
+  .hasil-header p {
+    font-size: 0.88rem;
+    color: var(--ink-faint);
+  }
+
+  /* SCORE CARDS */
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .score-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-card.rank-1 { border-color: var(--amber); }
+  .score-card.rank-1::before {
+    content: 'Paling Selaras';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    background: var(--amber);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem;
+  }
+
+  .score-card.rank-1 .school-name-big { margin-top: 1.5rem; }
+
+  .school-name-big {
+    font-family: 'Lora', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .score-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--amber-pale);
+    margin: 0.75rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--amber);
+    font-family: 'Lora', serif;
+  }
+
+  .score-label {
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* RADAR CHART */
+  .chart-section {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .chart-section h3 {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: var(--ink);
+  }
+
+  .chart-section p {
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    margin-bottom: 1.5rem;
+  }
+
+  .chart-wrap {
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  /* DIMENSI DETAIL */
+  .dimensi-section {
+    margin-bottom: 2rem;
+  }
+
+  .dimensi-title {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dimensi-item {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .dimensi-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .dimensi-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .dimensi-scores {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .d-score {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    background: var(--amber-pale);
+    color: var(--amber);
+  }
+
+  .d-score.s2 { background: var(--sage-pale); color: var(--sage); }
+  .d-score.s3 { background: var(--rose-pale); color: var(--rose); }
+
+  .bar-group { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.5rem; }
+
+  .bar-row { display: flex; align-items: center; gap: 0.6rem; }
+
+  .bar-label { font-size: 0.72rem; color: var(--ink-faint); width: 80px; flex-shrink: 0; }
+
+  .bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+
+  .bar-fill.c1 { background: var(--amber); }
+  .bar-fill.c2 { background: var(--sage); }
+  .bar-fill.c3 { background: var(--rose); }
+
+  /* NARASI */
+  .narasi-card {
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .narasi-card h3 {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--amber-light);
+    margin-bottom: 1rem;
+  }
+
+  .narasi-item {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .narasi-item:last-child { border: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .narasi-school {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--amber-light);
+    margin-bottom: 0.35rem;
+  }
+
+  .narasi-text {
+    font-size: 0.88rem;
+    color: rgba(245,240,232,0.8);
+    line-height: 1.65;
+  }
+
+  /* CATATAN */
+  .catatan {
+    background: var(--amber-pale);
+    border-left: 3px solid var(--amber);
+    padding: 1rem 1.25rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.82rem;
+    color: var(--ink-light);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  /* ULANG */
+  .ulang-row {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .btn-ulang {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--ink-faint);
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-ulang:hover { border-color: var(--ink); color: var(--ink); }
+
+  /* ERROR */
+  .err { color: var(--rose); font-size: 0.78rem; margin-top: 0.3rem; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--border);
+  }
+
+  /* MOBILE */
+  @media (max-width: 500px) {
+    .priority-item {
+      grid-template-columns: 110px 1fr 32px;
+    }
+    .school-tabs { flex-wrap: wrap; }
+    .score-grid { grid-template-columns: 1fr; }
+    .btn-row { flex-direction: column-reverse; }
+    .btn { width: 100%; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">Alat Bantu Orang Tua</div>
+  <h1>Cermin <em>Sekolah</em></h1>
+  <p>Bukan untuk memberi jawaban. Hanya untuk membantu melihat lebih jelas.</p>
+</header>
+
+<div class="progress-bar">
+  <div class="step-indicator">
+    <div class="step-dot active" id="dot1">1</div>
+    <div class="step-line" id="line1"></div>
+    <div class="step-dot" id="dot2">2</div>
+    <div class="step-line" id="line2"></div>
+    <div class="step-dot" id="dot3">3</div>
+  </div>
+</div>
+<div class="step-labels">
+  <div class="step-label-item active" id="lbl1">Keluarga</div>
+  <div class="step-label-spacer"></div>
+  <div class="step-label-item" id="lbl2">Sekolah</div>
+  <div class="step-label-spacer"></div>
+  <div class="step-label-item" id="lbl3">Cermin</div>
+</div>
+
+<main>
+
+<!-- STEP 1: PROFIL KELUARGA -->
+<div class="section active" id="step1">
+  <h2 class="section-title">Profil <em>Keluarga</em></h2>
+  <p class="section-desc">Isi dulu konteks keluarga Anda. Ini yang akan menjadi cermin untuk setiap pilihan sekolah.</p>
+
+  <div class="card">
+    <div class="card-title"><span class="num">1</span> Keuangan</div>
+    <div class="field">
+      <label>Anggaran bulanan untuk biaya sekolah (Rp)</label>
+      <input type="number" id="budget" placeholder="Contoh: 2000000" min="0">
+    </div>
+
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="num">2</span> Visi Pendidikan Rumah</div>
+    <div class="field">
+      <label>Apa yang paling penting bagi keluarga Anda? (pilih semua yang sesuai)</label>
+      <div class="visi-tags" id="visiKeluarga">
+        <span class="visi-tag" data-val="akademik">Prestasi Akademik</span>
+        <span class="visi-tag" data-val="karakter">Pembentukan Karakter</span>
+        <span class="visi-tag" data-val="islam">Nilai Keislaman</span>
+        <span class="visi-tag" data-val="quran">Hafalan Quran</span>
+        <span class="visi-tag" data-val="olimpiade">Olimpiade / Sains</span>
+        <span class="visi-tag" data-val="sosial">Kecerdasan Sosial</span>
+        <span class="visi-tag" data-val="seni">Seni & Kreativitas</span>
+        <span class="visi-tag" data-val="mandiri">Kemandirian</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="num">3</span> Mana yang Paling Penting bagi Anda?</div>
+    <p style="font-size:0.82rem;color:var(--ink-faint);margin-bottom:1rem">Geser ke kanan jika hal itu sangat penting, ke kiri jika kurang penting.</p>
+    <div class="priority-group">
+      <div class="priority-item">
+        <label>💰 Biaya Sekolah</label>
+        <input type="range" id="wBiaya" min="1" max="10" value="7" oninput="document.getElementById('wBiayaV').textContent=this.value">
+        <span class="range-val" id="wBiayaV">7</span>
+      </div>
+      <div class="priority-item">
+        <label>🎯 Kecocokan Tujuan</label>
+        <input type="range" id="wVisi" min="1" max="10" value="9" oninput="document.getElementById('wVisiV').textContent=this.value">
+        <span class="range-val" id="wVisiV">9</span>
+      </div>
+      <div class="priority-item">
+        <label>📍 Jarak dari Rumah</label>
+        <input type="range" id="wJarak" min="1" max="10" value="6" oninput="document.getElementById('wJarakV').textContent=this.value">
+        <span class="range-val" id="wJarakV">6</span>
+      </div>
+    </div>
+    <div class="priority-note">Tidak ada jawaban yang benar atau salah — ini hanya mencerminkan apa yang sedang penting bagi keluarga Anda saat ini</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="num">4</span> Jarak & Energi Anak</div>
+    <div class="field">
+      <label>Toleransi waktu tempuh (menit, satu arah)</label>
+      <select id="toleransiJarak">
+        <option value="15">Maksimal 15 menit</option>
+        <option value="30" selected>Maksimal 30 menit</option>
+        <option value="45">Maksimal 45 menit</option>
+        <option value="60">Maksimal 60 menit</option>
+        <option value="999">Tidak ada batas khusus</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="goStep(2)">Lanjut ke Data Sekolah →</button>
+  </div>
+</div>
+
+<!-- STEP 2: DATA SEKOLAH -->
+<div class="section" id="step2">
+  <h2 class="section-title">Data <em>Sekolah</em></h2>
+  <p class="section-desc">Isi data untuk 2–3 sekolah yang sedang Anda pertimbangkan.</p>
+
+  <div class="school-tabs">
+    <button class="school-tab active" onclick="switchSchool(1)">Sekolah 1</button>
+    <button class="school-tab" onclick="switchSchool(2)">Sekolah 2</button>
+    <button class="school-tab" onclick="switchSchool(3)">Sekolah 3</button>
+  </div>
+
+  <!-- SCHOOL 1 -->
+  <div class="school-form active" id="sf1">
+    <div class="card">
+      <div class="field">
+        <label>Nama Sekolah</label>
+        <input type="text" id="s1nama" placeholder="Contoh: SD Islam Al-Azhar">
+      </div>
+      <div class="field">
+        <label>Biaya masuk / uang pangkal (Rp)</label>
+        <input type="number" id="s1masuk" placeholder="0 jika tidak ada" min="0">
+      </div>
+      <div class="field">
+        <label>Biaya bulanan (Rp)</label>
+        <input type="number" id="s1bulanan" placeholder="Contoh: 1500000" min="0">
+      </div>
+      <div class="field">
+        <label>Estimasi waktu tempuh dari rumah (menit)</label>
+        <input type="number" id="s1jarak" placeholder="Contoh: 20" min="0" max="180">
+      </div>
+      <div class="field">
+        <label>Arah pendidikan sekolah ini (pilih yang sesuai)</label>
+        <div class="visi-tags" id="visiS1">
+          <span class="visi-tag" data-val="akademik">Prestasi Akademik</span>
+          <span class="visi-tag" data-val="karakter">Pembentukan Karakter</span>
+          <span class="visi-tag" data-val="islam">Nilai Keislaman</span>
+          <span class="visi-tag" data-val="quran">Hafalan Quran</span>
+          <span class="visi-tag" data-val="olimpiade">Olimpiade / Sains</span>
+          <span class="visi-tag" data-val="sosial">Kecerdasan Sosial</span>
+          <span class="visi-tag" data-val="seni">Seni & Kreativitas</span>
+          <span class="visi-tag" data-val="mandiri">Kemandirian</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHOOL 2 -->
+  <div class="school-form" id="sf2">
+    <div class="card">
+      <div class="field">
+        <label>Nama Sekolah</label>
+        <input type="text" id="s2nama" placeholder="Contoh: SD Negeri 01">
+      </div>
+      <div class="field">
+        <label>Biaya masuk / uang pangkal (Rp)</label>
+        <input type="number" id="s2masuk" placeholder="0 jika tidak ada" min="0">
+      </div>
+      <div class="field">
+        <label>Biaya bulanan (Rp)</label>
+        <input type="number" id="s2bulanan" placeholder="Contoh: 500000" min="0">
+      </div>
+      <div class="field">
+        <label>Estimasi waktu tempuh dari rumah (menit)</label>
+        <input type="number" id="s2jarak" placeholder="Contoh: 10" min="0" max="180">
+      </div>
+      <div class="field">
+        <label>Arah pendidikan sekolah ini (pilih yang sesuai)</label>
+        <div class="visi-tags" id="visiS2">
+          <span class="visi-tag" data-val="akademik">Prestasi Akademik</span>
+          <span class="visi-tag" data-val="karakter">Pembentukan Karakter</span>
+          <span class="visi-tag" data-val="islam">Nilai Keislaman</span>
+          <span class="visi-tag" data-val="quran">Hafalan Quran</span>
+          <span class="visi-tag" data-val="olimpiade">Olimpiade / Sains</span>
+          <span class="visi-tag" data-val="sosial">Kecerdasan Sosial</span>
+          <span class="visi-tag" data-val="seni">Seni & Kreativitas</span>
+          <span class="visi-tag" data-val="mandiri">Kemandirian</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHOOL 3 -->
+  <div class="school-form" id="sf3">
+    <div class="card">
+      <div class="field">
+        <label>Nama Sekolah <span style="color:var(--ink-faint);font-weight:300">(opsional)</span></label>
+        <input type="text" id="s3nama" placeholder="Kosongkan jika hanya 2 sekolah">
+      </div>
+      <div class="field">
+        <label>Biaya masuk / uang pangkal (Rp)</label>
+        <input type="number" id="s3masuk" placeholder="0 jika tidak ada" min="0">
+      </div>
+      <div class="field">
+        <label>Biaya bulanan (Rp)</label>
+        <input type="number" id="s3bulanan" placeholder="Contoh: 800000" min="0">
+      </div>
+      <div class="field">
+        <label>Estimasi waktu tempuh dari rumah (menit)</label>
+        <input type="number" id="s3jarak" placeholder="Contoh: 35" min="0" max="180">
+      </div>
+      <div class="field">
+        <label>Arah pendidikan sekolah ini (pilih yang sesuai)</label>
+        <div class="visi-tags" id="visiS3">
+          <span class="visi-tag" data-val="akademik">Prestasi Akademik</span>
+          <span class="visi-tag" data-val="karakter">Pembentukan Karakter</span>
+          <span class="visi-tag" data-val="islam">Nilai Keislaman</span>
+          <span class="visi-tag" data-val="quran">Hafalan Quran</span>
+          <span class="visi-tag" data-val="olimpiade">Olimpiade / Sains</span>
+          <span class="visi-tag" data-val="sosial">Kecerdasan Sosial</span>
+          <span class="visi-tag" data-val="seni">Seni & Kreativitas</span>
+          <span class="visi-tag" data-val="mandiri">Kemandirian</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="errMsg" class="err" style="margin-top:-0.5rem;display:none"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goStep(1)">← Kembali</button>
+    <button class="btn btn-primary" onclick="hitungHasil()">Lihat Cermin →</button>
+  </div>
+</div>
+
+<!-- STEP 3: HASIL -->
+<div class="section" id="step3">
+  <div class="hasil-header">
+    <h2>Cermin Anda</h2>
+    <p>Bukan penilaian benar atau salah — hanya gambaran seberapa selaras tiap pilihan dengan konteks keluarga Anda saat ini</p>
+  </div>
+
+  <div class="score-grid" id="scoreGrid"></div>
+
+  <div class="chart-section">
+    <h3>Peta Keselarasan</h3>
+    <p>Tiga dimensi yang Anda prioritaskan, dipetakan untuk tiap sekolah</p>
+    <div class="chart-wrap">
+      <svg id="radarChart" viewBox="0 0 300 300" width="100%" style="max-width:340px;display:block;margin:0 auto"></svg>
+      <div id="radarLegend" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1rem"></div>
+    </div>
+  </div>
+
+  <div class="dimensi-section">
+    <div class="dimensi-title">Detail per Dimensi</div>
+    <div id="dimensiDetail"></div>
+  </div>
+
+  <div class="narasi-card">
+    <h3>Yang perlu dipertimbangkan lebih lanjut</h3>
+    <div id="narasi"></div>
+  </div>
+
+  <div class="catatan">
+    <strong>Catatan:</strong> Cermin ini bekerja dari data yang Anda masukkan. Ia tidak tahu hal-hal yang hanya Anda yang tahu — suasana ketika Anda mengunjungi sekolah, percakapan dengan guru, atau intuisi yang muncul dari dalam. Gunakan ini sebagai salah satu dari banyak pertimbangan.
+  </div>
+
+  <div class="ulang-row">
+    <button class="btn-ulang" onclick="mulaiUlang()">Ubah data & lihat ulang</button>
+  </div>
+</div>
+
+</main>
+
+<footer>Dibuat untuk membantu orang tua melihat — bukan memutuskan</footer>
+
+<script>
+// =================== STATE ===================
+let currentStep = 1;
+let activeSchool = 1;
+
+// =================== NAVIGATION ===================
+function goStep(n) {
+  document.getElementById('step'+currentStep).classList.remove('active');
+  document.getElementById('step'+n).classList.add('active');
+  currentStep = n;
+  updateProgress(n);
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function updateProgress(n) {
+  for(let i=1;i<=3;i++){
+    const dot = document.getElementById('dot'+i);
+    const lbl = document.getElementById('lbl'+i);
+    dot.classList.remove('active','done');
+    lbl.classList.remove('active','done');
+    if(i < n){ dot.classList.add('done'); lbl.classList.add('done'); }
+    if(i === n){ dot.classList.add('active'); lbl.classList.add('active'); }
+  }
+  for(let i=1;i<=2;i++){
+    const line = document.getElementById('line'+i);
+    line.classList.remove('done');
+    if(i < n) line.classList.add('done');
+  }
+}
+
+// =================== SCHOOL TABS ===================
+function switchSchool(n) {
+  activeSchool = n;
+  document.querySelectorAll('.school-tab').forEach((t,i) => {
+    t.classList.toggle('active', i+1 === n);
+  });
+  document.querySelectorAll('.school-form').forEach((f,i) => {
+    f.classList.toggle('active', i+1 === n);
+  });
+}
+
+// =================== VISI TAGS ===================
+document.querySelectorAll('.visi-tags').forEach(container => {
+  container.querySelectorAll('.visi-tag').forEach(tag => {
+    tag.addEventListener('click', () => tag.classList.toggle('selected'));
+  });
+});
+
+function getSelectedVisi(containerId) {
+  return [...document.querySelectorAll('#'+containerId+' .visi-tag.selected')]
+    .map(t => t.dataset.val);
+}
+
+// =================== HITUNG ===================
+function hitungHasil() {
+  const s1nama = document.getElementById('s1nama').value.trim();
+  const s2nama = document.getElementById('s2nama').value.trim();
+  if(!s1nama || !s2nama) {
+    const err = document.getElementById('errMsg');
+    err.textContent = 'Minimal isi nama Sekolah 1 dan Sekolah 2 untuk perbandingan.';
+    err.style.display = 'block';
+    switchSchool(!s1nama ? 1 : 2);
+    return;
+  }
+  document.getElementById('errMsg').style.display = 'none';
+
+  const budget    = parseFloat(document.getElementById('budget').value) || 0;
+  const pctBudget = parseInt(document.getElementById('pctBudget').value);
+  const tolJarak  = parseInt(document.getElementById('toleransiJarak').value);
+  const wBiaya    = parseInt(document.getElementById('wBiaya').value);
+  const wVisi     = parseInt(document.getElementById('wVisi').value);
+  const wJarak    = parseInt(document.getElementById('wJarak').value);
+  const visiK     = getSelectedVisi('visiKeluarga');
+
+  const schools = [];
+  for(let i=1;i<=3;i++){
+    const nama = document.getElementById('s'+i+'nama').value.trim();
+    if(!nama) continue;
+    schools.push({
+      nama,
+      masuk:   parseFloat(document.getElementById('s'+i+'masuk').value) || 0,
+      bulanan: parseFloat(document.getElementById('s'+i+'bulanan').value) || 0,
+      jarak:   parseFloat(document.getElementById('s'+i+'jarak').value) || 0,
+      visi:    getSelectedVisi('visiS'+i),
+    });
+  }
+
+  // Hitung skor per dimensi (0-100)
+  const results = schools.map(s => {
+    // BIAYA SCORE
+    let biayaScore = 0;
+    if(budget > 0 && s.bulanan > 0) {
+      const ratio = s.bulanan / budget;
+      if(ratio <= 0.6) biayaScore = 100;
+      else if(ratio <= 0.8) biayaScore = 80;
+      else if(ratio <= 1.0) biayaScore = 60;
+      else if(ratio <= 1.2) biayaScore = 35;
+      else biayaScore = 10;
+    } else {
+      biayaScore = 60; // data tidak cukup, netral
+    }
+
+    // VISI SCORE — berapa % overlap antara visi keluarga dan visi sekolah
+    let visiScore = 0;
+    if(visiK.length > 0 && s.visi.length > 0) {
+      const overlap = visiK.filter(v => s.visi.includes(v)).length;
+      visiScore = Math.round((overlap / visiK.length) * 100);
+    } else if(visiK.length === 0) {
+      visiScore = 70; // belum mengisi, netral
+    } else {
+      visiScore = 30; // sekolah tidak ada visi yang dipilih
+    }
+
+    // JARAK SCORE
+    let jarakScore = 0;
+    if(s.jarak === 0) { jarakScore = 70; }
+    else if(tolJarak === 999) {
+      jarakScore = s.jarak <= 30 ? 100 : s.jarak <= 60 ? 80 : 60;
+    } else {
+      const ratio = s.jarak / tolJarak;
+      if(ratio <= 0.5) jarakScore = 100;
+      else if(ratio <= 0.8) jarakScore = 80;
+      else if(ratio <= 1.0) jarakScore = 60;
+      else if(ratio <= 1.3) jarakScore = 35;
+      else jarakScore = 10;
+    }
+
+    // TOTAL (weighted)
+    const total = Math.round(
+      (biayaScore * wBiaya + visiScore * wVisi + jarakScore * wJarak) /
+      (wBiaya + wVisi + wJarak)
+    );
+
+    return { ...s, biayaScore, visiScore, jarakScore, total };
+  });
+
+  // Urutkan berdasarkan total
+  results.sort((a,b) => b.total - a.total);
+
+  renderHasil(results, { budget, tolJarak, wBiaya, wVisi, wJarak, visiK });
+  goStep(3);
+}
+
+// =================== RENDER ===================
+const COLORS = ['#C8862A', '#5A7A6A', '#A85A5A'];
+const COLORBG = ['rgba(200,134,42,0.15)', 'rgba(90,122,106,0.15)', 'rgba(168,90,90,0.15)'];
+
+function renderHasil(results, ctx) {
+  // SCORE CARDS
+  const grid = document.getElementById('scoreGrid');
+  grid.innerHTML = '';
+  results.forEach((r, i) => {
+    grid.innerHTML += `
+      <div class="score-card ${i===0?'rank-1':''}">
+        <div class="school-name-big">${r.nama}</div>
+        <div class="score-circle">${r.total}</div>
+        <div class="score-label">Skor Keselarasan</div>
+      </div>`;
+  });
+
+  // RADAR CHART SVG
+  drawRadar(results);
+
+  // DIMENSI DETAIL
+  const dd = document.getElementById('dimensiDetail');
+  const dims = [
+    { key: 'biayaScore', label: '💰 Biaya Sekolah', desc: 'Seberapa sesuai biaya bulanan dengan anggaran Anda' },
+    { key: 'visiScore',  label: '🎯 Kecocokan Tujuan', desc: 'Seberapa selaras arah pendidikan sekolah dengan tujuan keluarga' },
+    { key: 'jarakScore', label: '📍 Jarak dari Rumah', desc: 'Seberapa nyaman jarak tempuh bagi anak setiap hari' },
+  ];
+  dd.innerHTML = dims.map(d => `
+    <div class="dimensi-item">
+      <div class="dimensi-row">
+        <div class="dimensi-name">${d.label}</div>
+        <div class="dimensi-scores">
+          ${results.map((r,i) => `<span class="d-score s${i+1}">${r.nama.split(' ')[0]}: ${r[d.key]}</span>`).join('')}
+        </div>
+      </div>
+      <div style="font-size:0.78rem;color:var(--ink-faint);margin-bottom:0.6rem">${d.desc}</div>
+      <div class="bar-group">
+        ${results.map((r,i) => `
+          <div class="bar-row">
+            <div class="bar-label">${r.nama.split(' ')[0]}</div>
+            <div class="bar-track"><div class="bar-fill c${i+1}" style="width:${r[d.key]}%"></div></div>
+            <div style="font-size:0.72rem;color:var(--ink-faint);width:28px;text-align:right">${r[d.key]}</div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+
+  // NARASI
+  const nar = document.getElementById('narasi');
+  nar.innerHTML = results.map(r => {
+    const notes = [];
+    if(r.biayaScore < 50) notes.push(`Biaya bulanan melebihi anggaran yang Anda siapkan — ini perlu didiskusikan lebih dalam, termasuk kemungkinan penyesuaian dari sisi lain`);
+    if(r.visiScore < 50) notes.push(`Arah pendidikan sekolah ini kurang bersinggungan dengan visi yang Anda pilih — perlu digali apakah ada aspek lain yang mengimbanginya`);
+    if(r.jarakScore < 50) notes.push(`Jarak cukup jauh dari toleransi Anda — pertimbangkan bagaimana ini akan memengaruhi rutinitas harian anak dan energi yang tersisa setelah perjalanan`);
+    if(notes.length === 0) notes.push(`Tidak ada benturan besar antara sekolah ini dan konteks keluarga Anda saat ini`);
+    return `<div class="narasi-item">
+      <div class="narasi-school">${r.nama}</div>
+      <div class="narasi-text">${notes.map(n => '· '+n).join('<br>')}</div>
+    </div>`;
+  }).join('');
+}
+
+
+// =================== RADAR SVG ===================
+function drawRadar(results) {
+  const svg = document.getElementById('radarChart');
+  svg.innerHTML = '';
+  const cx = 150, cy = 150, r = 110;
+  const labels = ['Biaya Sekolah', 'Kecocokan Tujuan', 'Jarak dari Rumah'];
+  const n = 3;
+  const angles = labels.map((_, i) => (Math.PI * 2 * i / n) - Math.PI / 2);
+
+  function pt(val, angle, maxR) {
+    const d = (val / 100) * maxR;
+    return [cx + d * Math.cos(angle), cy + d * Math.sin(angle)];
+  }
+
+  function svgEl(tag, attrs, text) {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v));
+    if(text) el.textContent = text;
+    return el;
+  }
+
+  // Grid rings
+  [25, 50, 75, 100].forEach(pct => {
+    const pts = angles.map(a => pt(pct, a, r).join(',')).join(' ');
+    svg.appendChild(svgEl('polygon', { points: pts, fill: 'none', stroke: 'rgba(0,0,0,0.08)', 'stroke-width': '1' }));
+  });
+
+  // Axis lines
+  angles.forEach(a => {
+    const [x, y] = pt(100, a, r);
+    svg.appendChild(svgEl('line', { x1: cx, y1: cy, x2: x, y2: y, stroke: 'rgba(0,0,0,0.08)', 'stroke-width': '1' }));
+  });
+
+  // Data polygons
+  results.forEach((res, i) => {
+    const vals = [res.biayaScore, res.visiScore, res.jarakScore];
+    const pts = vals.map((v, j) => pt(v, angles[j], r).join(',')).join(' ');
+    svg.appendChild(svgEl('polygon', { points: pts, fill: COLORBG[i], stroke: COLORS[i], 'stroke-width': '2', opacity: '0.9' }));
+    vals.forEach((v, j) => {
+      const [x, y] = pt(v, angles[j], r);
+      svg.appendChild(svgEl('circle', { cx: x, cy: y, r: '4', fill: COLORS[i] }));
+    });
+  });
+
+  // Labels
+  angles.forEach((a, i) => {
+    const [x, y] = pt(118, a, r);
+    const anchor = x < cx - 5 ? 'end' : x > cx + 5 ? 'start' : 'middle';
+    const dy = y < cy - 5 ? '-0.4em' : y > cy + 5 ? '1em' : '0.35em';
+    svg.appendChild(svgEl('text', {
+      x, y, 'text-anchor': anchor, dy,
+      'font-family': 'Lora, serif', 'font-size': '11', fill: '#1C1A16'
+    }, labels[i]));
+  });
+
+  // Legend
+  const leg = document.getElementById('radarLegend');
+  leg.innerHTML = results.map((r,i) => `
+    <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.75rem;color:var(--ink-light)">
+      <div style="width:12px;height:12px;border-radius:2px;background:${COLORS[i]}"></div>
+      ${r.nama}
+    </div>`).join('');
+}
+
+
+  goStep(2);
+}
+
+// Animate bars when step 3 shows
+const observer = new MutationObserver(() => {
+  document.querySelectorAll('.bar-fill').forEach(b => {
+    const w = b.style.width;
+    b.style.width = '0';
+    setTimeout(() => { b.style.width = w; }, 100);
+  });
+});
+observer.observe(document.getElementById('step3'), { attributes: true, attributeFilter: ['class'] });
+</script>
+</body>
+</html>
