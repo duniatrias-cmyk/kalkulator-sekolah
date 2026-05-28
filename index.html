@@ -682,6 +682,61 @@
   /* ERROR */
   .err { color: var(--rose); font-size: 0.78rem; margin-top: 0.3rem; }
 
+  /* KONTEKS TOGGLE BUTTONS */
+  .toggle-btn-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+  }
+
+  .toggle-btn {
+    padding: 0.45rem 1.4rem;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink-faint);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .toggle-btn.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: white;
+  }
+
+  /* EXTRA FIELDS (kondisi Ya) */
+  .extra-fields {
+    display: none;
+    overflow: hidden;
+  }
+
+  .extra-fields.visible {
+    display: block;
+    animation: fadeUp 0.3s ease forwards;
+  }
+
+  /* SISA ANGGARAN */
+  .sisa-anggaran {
+    display: none;
+    margin-top: 0.55rem;
+    padding: 0.6rem 0.9rem;
+    background: var(--sage-pale);
+    border-left: 3px solid var(--sage);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.82rem;
+    color: var(--sage);
+    line-height: 1.5;
+  }
+
+  .sisa-anggaran strong {
+    font-weight: 600;
+    color: var(--sage);
+  }
+
   /* FOOTER */
   footer {
     text-align: center;
@@ -736,16 +791,39 @@
   <p class="section-desc">Isi dulu konteks keluarga Anda. Ini yang akan menjadi cermin untuk setiap pilihan sekolah.</p>
 
   <div class="card">
-    <div class="card-title"><span class="num">1</span> Keuangan</div>
+    <div class="card-title"><span class="num">1</span> Konteks Saat Ini</div>
     <div class="field">
-      <label>Anggaran bulanan untuk biaya sekolah (Rp)</label>
-      <input type="number" id="budget" placeholder="Contoh: 2000000" min="0">
+      <label>Apakah Anda sudah memiliki anak yang sedang sekolah?</label>
+      <div class="toggle-btn-group">
+        <button class="toggle-btn" id="btnSudah" onclick="toggleKonteks('ya')">Ya</button>
+        <button class="toggle-btn" id="btnBelum" onclick="toggleKonteks('belum')">Belum</button>
+      </div>
     </div>
-
+    <div class="extra-fields" id="extraKonteks">
+      <div class="field">
+        <label>Berapa anak yang sudah sekolah?</label>
+        <input type="number" id="jumlahAnakSekolah" placeholder="Contoh: 1" min="1" oninput="updateSisaAnggaran()">
+      </div>
+      <div class="field">
+        <label>Total biaya bulanan semua anak yang sudah sekolah saat ini (Rp)</label>
+        <input type="number" id="biayaAnakLain" placeholder="Contoh: 1500000" min="0" oninput="updateSisaAnggaran()">
+      </div>
+    </div>
   </div>
 
   <div class="card">
-    <div class="card-title"><span class="num">2</span> Visi Pendidikan Rumah</div>
+    <div class="card-title"><span class="num">2</span> Keuangan</div>
+    <div class="field">
+      <label>Anggaran bulanan untuk biaya sekolah (Rp)</label>
+      <input type="number" id="budget" placeholder="Contoh: 2000000" min="0" oninput="updateSisaAnggaran()">
+      <div class="sisa-anggaran" id="sisaAnggaranInfo">
+        Sisa anggaran untuk anak ini: <strong id="sisaAnggaranNominal"></strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="num">3</span> Visi Pendidikan Rumah</div>
     <div class="field">
       <label>Apa yang paling penting bagi keluarga Anda? (pilih semua yang sesuai)</label>
       <div class="visi-tags" id="visiKeluarga">
@@ -762,7 +840,7 @@
   </div>
 
   <div class="card">
-    <div class="card-title"><span class="num">3</span> Mana yang Paling Penting bagi Anda?</div>
+    <div class="card-title"><span class="num">4</span> Mana yang Paling Penting bagi Anda?</div>
     <p style="font-size:0.82rem;color:var(--ink-faint);margin-bottom:1rem">Geser ke kanan jika hal itu sangat penting, ke kiri jika kurang penting.</p>
     <div class="priority-group">
       <div class="priority-item">
@@ -785,7 +863,7 @@
   </div>
 
   <div class="card">
-    <div class="card-title"><span class="num">4</span> Jarak & Energi Anak</div>
+    <div class="card-title"><span class="num">5</span> Jarak & Energi Anak</div>
     <div class="field">
       <label>Toleransi waktu tempuh (menit, satu arah)</label>
       <select id="toleransiJarak">
@@ -972,6 +1050,37 @@
 // =================== STATE ===================
 let currentStep = 1;
 let activeSchool = 1;
+let sudahAdaAnakSekolah = false;
+
+// =================== KONTEKS SAAT INI ===================
+function toggleKonteks(val) {
+  sudahAdaAnakSekolah = val === 'ya';
+  document.getElementById('btnSudah').classList.toggle('active', val === 'ya');
+  document.getElementById('btnBelum').classList.toggle('active', val === 'belum');
+  document.getElementById('extraKonteks').classList.toggle('visible', val === 'ya');
+  updateSisaAnggaran();
+}
+
+function updateSisaAnggaran() {
+  const budget = parseFloat(document.getElementById('budget').value) || 0;
+  const info   = document.getElementById('sisaAnggaranInfo');
+  if (!sudahAdaAnakSekolah || budget === 0) {
+    info.style.display = 'none';
+    return;
+  }
+  const biayaLain = parseFloat(document.getElementById('biayaAnakLain').value) || 0;
+  const sisa = Math.max(0, budget - biayaLain);
+  info.style.display = 'block';
+  document.getElementById('sisaAnggaranNominal').textContent =
+    'Rp ' + sisa.toLocaleString('id-ID');
+}
+
+function getSisaAnggaran() {
+  const budget = parseFloat(document.getElementById('budget').value) || 0;
+  if (!sudahAdaAnakSekolah) return budget;
+  const biayaLain = parseFloat(document.getElementById('biayaAnakLain').value) || 0;
+  return Math.max(0, budget - biayaLain);
+}
 
 // =================== NAVIGATION ===================
 function goStep(n) {
@@ -1034,7 +1143,7 @@ function hitungHasil() {
   }
   document.getElementById('errMsg').style.display = 'none';
 
-  const budget    = parseFloat(document.getElementById('budget').value) || 0;
+  const budget    = getSisaAnggaran();
   const tolJarak  = parseInt(document.getElementById('toleransiJarak').value);
   const wBiaya    = parseInt(document.getElementById('wBiaya').value);
   const wVisi     = parseInt(document.getElementById('wVisi').value);
