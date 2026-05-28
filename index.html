@@ -744,7 +744,71 @@
     font-size: 0.75rem;
     color: var(--ink-faint);
     border-top: 1px solid var(--border);
+    line-height: 2;
   }
+
+  footer a {
+    color: var(--amber);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  footer a:hover { text-decoration: underline; }
+
+  .kopi-wrap {
+    margin-top: 0.75rem;
+  }
+
+  .btn-kopi {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--ink-light);
+    padding: 0.45rem 1.1rem;
+    border-radius: 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-kopi:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  .rekening-info {
+    display: none;
+    margin-top: 0.6rem;
+    padding: 0.55rem 1rem;
+    background: var(--amber-pale);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: var(--ink-light);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rekening-info.visible {
+    display: inline-flex;
+  }
+
+  .btn-copy {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+    line-height: 1;
+    transition: color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .btn-copy:hover { color: var(--amber); }
 
   /* MOBILE */
   @media (max-width: 500px) {
@@ -1034,7 +1098,7 @@
   </div>
 
   <div class="catatan">
-    <strong>Catatan:</strong> Cermin ini bekerja dari data yang Anda masukkan. Ia tidak tahu hal-hal yang hanya Anda yang tahu — suasana ketika Anda mengunjungi sekolah, percakapan dengan guru, atau intuisi yang muncul dari dalam. Gunakan ini sebagai salah satu dari banyak pertimbangan.
+    <strong>Catatan:</strong> Cermin ini bekerja dari data yang Anda masukkan. Ia tidak tahu hal-hal yang hanya Anda yang tahu — suasana ketika Anda mengunjungi sekolah, percakapan dengan guru, atau intuisi yang muncul dari dalam. Gunakan ini sebagai salah satu dari banyak pertimbangan. Kalkulator ini hanya mempertimbangkan biaya bulanan rutin. Uang pangkal, seragam, buku, dan biaya lain di luar cicilan bulanan tidak dihitung di sini.
   </div>
 
   <div class="ulang-row">
@@ -1044,7 +1108,17 @@
 
 </main>
 
-<footer>Dibuat untuk membantu orang tua melihat — bukan memutuskan</footer>
+<footer>
+  <div>Dibuat untuk membantu orang tua melihat — bukan memutuskan</div>
+  <div>Ada masukan atau cerita? Kirim DM ke <a href="https://instagram.com/triasabdullah" target="_blank" rel="noopener">@triasabdullah</a> di Instagram.</div>
+  <div class="kopi-wrap">
+    <button class="btn-kopi" onclick="toggleKopi(this)">☕ Traktir Kopi</button>
+    <div class="rekening-info" id="rekeningInfo">
+      Bank Jago&nbsp;·&nbsp;<strong>504620058886</strong>&nbsp;·&nbsp;a.n. Trias Abdullah
+      <button class="btn-copy" id="btnCopy" onclick="copyRekening()" title="Salin nomor rekening">⧉</button>
+    </div>
+  </div>
+</footer>
 
 <script>
 // =================== STATE ===================
@@ -1343,6 +1417,26 @@ function drawRadar(results) {
       <div style="width:12px;height:12px;border-radius:2px;background:${COLORS[i]}"></div>
       ${r.nama}
     </div>`).join('');
+}
+
+// =================== KOPI ===================
+function toggleKopi(btn) {
+  const box = document.getElementById('rekeningInfo');
+  const visible = box.classList.toggle('visible');
+  btn.textContent = visible ? '✕ Tutup' : '☕ Traktir Kopi';
+}
+
+function copyRekening() {
+  const norek = '504620058886';
+  navigator.clipboard.writeText(norek).then(() => {
+    const btn = document.getElementById('btnCopy');
+    btn.textContent = '✓';
+    btn.style.color = 'var(--sage)';
+    setTimeout(() => {
+      btn.textContent = '⧉';
+      btn.style.color = '';
+    }, 2000);
+  });
 }
 
 // Animate bars when step 3 shows
