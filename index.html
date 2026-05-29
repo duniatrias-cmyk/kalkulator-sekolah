@@ -659,25 +659,147 @@
     line-height: 1.6;
   }
 
-  /* ULANG */
-  .ulang-row {
+  /* SCREENSHOT BLOCK */
+  .ss-block {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .ss-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.5rem;
+  }
+
+  .ss-desc {
+    font-size: 0.88rem;
+    color: var(--ink-light);
+    line-height: 1.65;
+    margin-bottom: 1rem;
+  }
+
+  .ss-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .ss-tip {
+    font-size: 0.82rem;
+    color: var(--ink-light);
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 0.45rem 0.75rem;
+    line-height: 1.5;
+  }
+
+  .ss-tip strong { color: var(--ink); font-weight: 500; }
+
+  /* HITUNG ULANG BLOCK */
+  .ulang-block {
     text-align: center;
-    margin-top: 2rem;
+    padding: 1.5rem 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .ulang-block p {
+    font-size: 0.88rem;
+    color: var(--ink-faint);
+    margin-bottom: 0.85rem;
   }
 
   .btn-ulang {
     background: transparent;
     border: 1.5px solid var(--border);
-    color: var(--ink-faint);
-    padding: 0.6rem 1.5rem;
+    color: var(--ink-light);
+    padding: 0.65rem 1.75rem;
     border-radius: 8px;
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
   }
 
   .btn-ulang:hover { border-color: var(--ink); color: var(--ink); }
+
+  /* MODAL KONFIRMASI */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(28,26,22,0.55);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .modal-overlay.visible { display: flex; }
+
+  .modal-box {
+    background: var(--warm-white);
+    border-radius: 14px;
+    padding: 1.75rem 1.5rem 1.5rem;
+    max-width: 360px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(28,26,22,0.18);
+  }
+
+  .modal-box p {
+    font-size: 0.92rem;
+    color: var(--ink);
+    line-height: 1.65;
+    margin-bottom: 1.4rem;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 0.65rem;
+    justify-content: flex-end;
+  }
+
+  .btn-modal-cancel {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--ink-light);
+    padding: 0.6rem 1.25rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-modal-cancel:hover { border-color: var(--ink-light); }
+
+  .btn-modal-confirm {
+    background: var(--rose);
+    border: none;
+    color: white;
+    padding: 0.6rem 1.25rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-modal-confirm:hover { background: #983E3E; }
+
+  @media (max-width: 500px) {
+    .modal-actions { flex-direction: column-reverse; }
+    .btn-modal-cancel, .btn-modal-confirm { width: 100%; text-align: center; }
+  }
 
   /* ERROR */
   .err { color: var(--rose); font-size: 0.78rem; margin-top: 0.3rem; }
@@ -1101,8 +1223,32 @@
     <strong>Catatan:</strong> Cermin ini bekerja dari data yang Anda masukkan. Ia tidak tahu hal-hal yang hanya Anda yang tahu — suasana ketika Anda mengunjungi sekolah, percakapan dengan guru, atau intuisi yang muncul dari dalam. Gunakan ini sebagai salah satu dari banyak pertimbangan. Kalkulator ini hanya mempertimbangkan biaya bulanan rutin. Uang pangkal, seragam, buku, dan biaya lain di luar cicilan bulanan tidak dihitung di sini.
   </div>
 
-  <div class="ulang-row">
-    <button class="btn-ulang" onclick="mulaiUlang()">Ubah data & lihat ulang</button>
+  <!-- BLOK SCREENSHOT -->
+  <div class="ss-block">
+    <div class="ss-title">Simpan Hasilmu</div>
+    <p class="ss-desc">Hasil ini tidak tersimpan di mana pun. Screenshot halaman ini agar bisa kamu buka kembali saat berdiskusi atau mempertimbangkan pilihan.</p>
+    <div class="ss-tips">
+      <div class="ss-tip">📱 <strong>iPhone</strong> — Tombol samping + Volume Atas, lalu simpan ke Foto</div>
+      <div class="ss-tip">📱 <strong>Android</strong> — Tombol Power + Volume Bawah, lalu simpan ke Galeri</div>
+      <div class="ss-tip">💻 <strong>Laptop/PC</strong> — Windows: Win + Shift + S &nbsp;·&nbsp; Mac: Cmd + Shift + 4</div>
+    </div>
+  </div>
+
+  <!-- BLOK HITUNG ULANG -->
+  <div class="ulang-block">
+    <p>Ingin mencoba dengan angka yang berbeda?</p>
+    <button class="btn-ulang" onclick="konfirmasiUlang()">Hitung Ulang</button>
+  </div>
+</div>
+
+<!-- MODAL KONFIRMASI HITUNG ULANG -->
+<div class="modal-overlay" id="modalUlang" onclick="tutupModalJikaOverlay(event)">
+  <div class="modal-box">
+    <p>Semua jawaban akan terhapus dan kamu akan kembali ke halaman awal. Lanjutkan?</p>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="tutupModal()">Batal</button>
+      <button class="btn-modal-confirm" onclick="location.reload()">Ya, hapus</button>
+    </div>
   </div>
 </div>
 
@@ -1417,6 +1563,19 @@ function drawRadar(results) {
       <div style="width:12px;height:12px;border-radius:2px;background:${COLORS[i]}"></div>
       ${r.nama}
     </div>`).join('');
+}
+
+// =================== HITUNG ULANG ===================
+function konfirmasiUlang() {
+  document.getElementById('modalUlang').classList.add('visible');
+}
+
+function tutupModal() {
+  document.getElementById('modalUlang').classList.remove('visible');
+}
+
+function tutupModalJikaOverlay(e) {
+  if (e.target === e.currentTarget) tutupModal();
 }
 
 // =================== KOPI ===================
